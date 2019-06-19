@@ -1,0 +1,20 @@
+.DS_Store
+node_modules/
+/client/liff/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/client/liff/test/unit/coverage/
+/client/liff/test/e2e/reports/
+/client/line-bot/keys.go
+/liff/selenium-debug.log
+/server/db/key.go
+.env
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
