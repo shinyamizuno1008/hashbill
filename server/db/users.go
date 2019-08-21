@@ -71,6 +71,7 @@ const listUserStatement = "SELECT * FROM users ORDER BY user_name"
 
 // ListUsers returns a list of users.
 func (userDB *userDB) ListUsers() ([]*User, error) {
+	fmt.Println("hello from list users")
 	rows, err := userDB.list.Query()
 	if err != nil {
 		return nil, err
@@ -86,7 +87,6 @@ func (userDB *userDB) ListUsers() ([]*User, error) {
 
 		users = append(users, user)
 	}
-
 	return users, nil
 }
 

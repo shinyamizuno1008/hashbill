@@ -1,19 +1,22 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
+import RegisterEvent from "./components/RegisterEvent";
+
 export default {
-  name: 'App'
-}
+  components: {
+    RegisterEvent
+  }
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

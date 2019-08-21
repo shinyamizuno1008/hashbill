@@ -36,7 +36,7 @@ func newMySQLEventsDB(config MySQLConfig) (*eventDB, error) {
 	if eventDB.listedBy, err = conn.Prepare(listByHostAndEventStatement); err != nil {
 		return nil, fmt.Errorf("mysql: prepare list by in event db: %v", err)
 	}
-	if eventDB.get, err = conn.Prepare(getEventStatement); err != nil {
+	if eventDB.get, err = conn.Prepare(getEventStatementWithHostId); err != nil {
 		return nil, fmt.Errorf("mysql: prepare get in event db: %v", err)
 	}
 	if eventDB.insert, err = conn.Prepare(insertEventStatement); err != nil {
@@ -137,7 +137,7 @@ func (eventDB *eventDB) ListEventsHostedBy(hostID string) ([]*Event, error) {
 	return events, nil
 }
 
-const getEventStatement = "SELECT * FROM events WHERE host_id = ? AND event_name = ?"
+const getEventStatementWithHostId = "SELECT * FROM events WHERE host_id = ? AND event_name = ?"
 
 // GetEvent retrieves a event by its ID.
 func (eventDB *eventDB) GetEvent(hostID, eventName string) (*Event, error) {

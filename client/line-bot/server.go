@@ -21,7 +21,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/gorilla/sessions"
@@ -34,6 +33,7 @@ var SessionStore sessions.Store
 const (
 	inputFormat = "%s を入力してください。"
 	ownerID     = "Udeadbeefdeadbeefdeadbeefdeadbeef"
+	serverUrl   = "http://localhost:8000"
 )
 
 func main() {
@@ -134,7 +134,7 @@ func signupwithLINE(bot *linebot.Client, event *linebot.Event, w http.ResponseWr
 	formData.Set("userID", userID)
 	formData.Add("userName", userName)
 
-	_, err = http.PostForm(os.Getenv("HASHBILL_SERVER")+"/signup", formData)
+	_, err = http.PostForm(serverUrl+"/signup", formData)
 	if err != nil {
 		return appErrorf(err, "could not post user infor to the server: %v", err)
 	}
@@ -143,7 +143,7 @@ func signupwithLINE(bot *linebot.Client, event *linebot.Event, w http.ResponseWr
 }
 
 func showUser(bot *linebot.Client, event *linebot.Event) *appError {
-	res, err := http.Get("https://6314dad1.ngrok.io/user/" + event.Source.UserID)
+	res, err := http.Get(serverUrl + "/user/" + event.Source.UserID)
 	if err != nil {
 		return appErrorf(err, "could not get user info from the server: %v", err)
 	}
@@ -163,6 +163,30 @@ func showUser(bot *linebot.Client, event *linebot.Event) *appError {
 	}
 
 	return nil
+}
+
+func showEvents(bot *linebot.Client, event *linebot.Event) *appError {
+	res, err := http.Get(serverUrl + "/events")
+	if err != nil {
+		return appErrorf(err, "could not get events info from the server: %v", err)
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return appErrorf(err, "could not read events response body: %v", err)
+	}
+
+	var eventsInfo db.User
+	json.Unmarshal(body, &eventsInfo)
+
+	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("イベント一覧")).Do()
+	if err != nil {
+		return appErrorf(err, "could not reply to user: %v", err)
+	}
+
+	return nil
+
 }
 
 func registerEvent(bot *linebot.Client, event *linebot.Event, w http.ResponseWriter, req *http.Request, message string) *appError {

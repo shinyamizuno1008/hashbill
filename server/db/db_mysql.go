@@ -16,8 +16,6 @@ const usersTable = "users"
 const eventsTable = "events"
 const participantsTable = "participants"
 
-var a = &tables{users: ""}
-
 var createTableStatements = []string{
 	`CREATE DATABASE IF NOT EXISTS event_list DEFAULT CHARACTER SET = 'utf8' DEFAULT COLLATE 'utf8_general_ci';`,
 	`USE event_list;`,

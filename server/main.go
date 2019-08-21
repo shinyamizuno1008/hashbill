@@ -15,8 +15,10 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Methods("GET").Path("/user/{userID}").Handler(appHandler(getUserHandler))
+	r.Methods("GET").Path("/userlist").Handler(appHandler(getAllUserHandler))
+	r.Methods("GET").Path("/event/list").Handler(appHandler(getEventsHandler))
+	r.Methods("POST").Path("/event/register").Handler(appHandler(registerEventHandler))
 	r.Methods("POST").Path("/signup").Handler(appHandler(signupHandler))
-	r.Methods("POST").Path("/register/event").Handler(appHandler(registerEventHandler))
 	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("../client/dist")))
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8000", r))
@@ -90,8 +92,8 @@ func eventFromForm(r *http.Request) (*db.Event, error) {
 	event := &db.Event{
 		HostID:      r.FormValue("hostID"),
 		EventName:   r.FormValue("eventName"),
-		Date:        r.FormValue("date"),
-		Deadline:    r.FormValue("deadline"),
+		Date:        r.FormValue("eventDate") + " " + r.FormValue("eventTime"),
+		Deadline:    r.FormValue("deadlineDate") + " " + r.FormValue("deadlineTime"),
 		Location:    r.FormValue("location"),
 		MembersMax:  membersMax,
 		Lottery:     lottery,
@@ -145,6 +147,31 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) *appError {
 
 	userJSON, err := json.Marshal(*user)
 	w.Write(userJSON)
+	return nil
+}
+
+//getAllUserHandler show all users.
+func getAllUserHandler(w http.ResponseWriter, r *http.Request) *appError {
+	users, err := db.DB.ListUsers()
+	if err != nil {
+		return appErrorf(err, "could not get users from database: %v", err)
+	}
+
+	usersJSON, err := json.Marshal(users)
+	w.Write(usersJSON)
+	return nil
+}
+
+// getEventsHandler show all registered evetns.
+func getEventsHandler(w http.ResponseWriter, r *http.Request) *appError {
+	fmt.Println("hello from event handler")
+	events, err := db.DB.ListEvents()
+	if err != nil {
+		return appErrorf(err, "could not get events from database: %v", err)
+	}
+
+	eventsJSON, err := json.Marshal(events)
+	w.Write(eventsJSON)
 	return nil
 }
 
