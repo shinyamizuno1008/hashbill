@@ -18,6 +18,12 @@ module.exports = {
       },
       "/event/list": {
         target: "http://localhost:8000"
+      },
+      "/event/delete": {
+        target: "http://localhost:8000"
+      },
+      "/user/Ua407657943bb5b8592979e6eaabc2610/eventlist": {
+        target: "http://localhost:8000"
       }
     },
 
